@@ -1,7 +1,7 @@
 Summary:	Open Source installer build tool for Windows applications
 Name:		nsis
 Version:	2.34
-Release:	0.1
+Release:	1
 License:	zlib/libpng
 Group:		Development/Tools
 URL:		http://nsis.sourceforge.net/
@@ -11,7 +11,11 @@ Source1:	http://downloads.sourceforge.net/nsis/%{name}-%{version}.zip
 # Source1-md5:	565d17b3ff12dffcf678ec252a892c04
 Patch0:		optflags.patch
 BuildRequires:	libstdc++-devel
+%ifarch %{x8664}
+BuildRequires:	libstdc++32-devel
+%endif
 BuildRequires:	scons >= 0.96.93
+ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
