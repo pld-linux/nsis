@@ -9,6 +9,7 @@ Source0:	http://downloads.sourceforge.net/nsis/%{name}-%{version}-src.tar.bz2
 # Source0-md5:	60243c2562710eeac45bda1378e4c88c
 Source1:	http://downloads.sourceforge.net/nsis/%{name}-%{version}.zip
 # Source1-md5:	565d17b3ff12dffcf678ec252a892c04
+Patch0:		optflags.patch
 BuildRequires:	libstdc++-devel
 BuildRequires:	scons >= 0.96.93
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -22,11 +23,19 @@ Internet distribution.
 %prep
 %setup -q -n %{name}-%{version}-src -a1
 %{__cp} -aux %{name}-%{version}/* .
+%patch0 -p1
 
 %{__rm} -rf Docs/StrFunc
 
 %build
-%scons \
+# build & install must use exactly same args to cmake, so make shell wrapper
+# not to mistake.
+cat <<'EOF' > build.sh
+#!/bin/sh
+%scons "$@" \
+	APPEND_CCFLAGS="%{rpmcflags}" \
+	APPEND_CXXFLAGS="%{rpmcxxflags}" \
+	APPEND_LINKFLAGS="%{rpmldflags}" \
 	PREFIX=%{_prefix} \
 	PREFIX_DEST=$RPM_BUILD_ROOT \
 	PREFIX_CONF=%{_sysconfdir} \
@@ -36,19 +45,13 @@ Internet distribution.
 	SKIPMISC="all" \
 	VERSION="%{version}" \
 	STRIP="false"
+EOF
+chmod a+rx build.sh
+./build.sh
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%scons install \
-	PREFIX=%{_prefix} \
-	PREFIX_DEST=$RPM_BUILD_ROOT \
-	PREFIX_CONF=%{_sysconfdir} \
-	SKIPSTUBS="all" \
-	SKIPPLUGINS="all" \
-	SKIPUTILS="Library/RegTool,UIs,Makensisw,zip2exe,MakeLangId,NSIS Menu" \
-	SKIPMISC="all" \
-	VERSION="%{version}" \
-	STRIP="false"
+./build.sh install
 
 install -d $RPM_BUILD_ROOT%{_datadir}/nsis
 cp -fr Bin Contrib Include Menu Plugins Stubs $RPM_BUILD_ROOT%{_datadir}/nsis

@@ -1,0 +1,20 @@
+--- nsis-2.34-src/SConstruct~	2007-11-14 08:20:44.000000000 +0200
++++ nsis-2.34-src/SConstruct	2010-12-02 18:08:32.174357723 +0200
+@@ -169,7 +169,8 @@
+ opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
+ opts.Add(PathOption('APPEND_CPPPATH', 'Additional paths to search for include files', None))
+ opts.Add(PathOption('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
+-opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
++opts.Add(('APPEND_CCFLAGS', 'Additional C compiler flags'))
++opts.Add(('APPEND_CXXFLAGS', 'Additional C++ compiler flags'))
+ opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
+ # build options
+ opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
+@@ -355,6 +356,7 @@
+ 	defenv.Tool('mstoolkit', toolpath = ['SCons/Tools'])
+ 
+ defenv.Append(CCFLAGS = Split('$APPEND_CCFLAGS'))
++defenv.Append(CXXFLAGS = Split('$APPEND_CXXFLAGS'))
+ defenv.Append(LINKFLAGS = Split('$APPEND_LINKFLAGS'))
+ defenv.Append(CPPPATH = Split('$APPEND_CPPPATH'))
+ defenv.Append(LIBPATH = Split('$APPEND_LIBPATH'))
