@@ -57,18 +57,24 @@ chmod a+rx build.sh
 rm -rf $RPM_BUILD_ROOT
 ./build.sh install
 
+rm -r $RPM_BUILD_ROOT%{_datadir}/doc/nsis
+
 install -d $RPM_BUILD_ROOT%{_datadir}/nsis
 cp -fr Bin Contrib Include Menu Plugins Stubs $RPM_BUILD_ROOT%{_datadir}/nsis
+
+install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+cp -a Examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc COPYING Docs Examples
+%doc COPYING Docs
 %config(noreplace) %{_sysconfdir}/nsisconf.nsh
 %attr(755,root,root) %{_bindir}/GenPat
 %attr(755,root,root) %{_bindir}/LibraryLocal
 %attr(755,root,root) %{_bindir}/makensis
 %{_datadir}/nsis
-%exclude %{_datadir}/doc/nsis
+
+%{_examplesdir}/%{name}-%{version}
